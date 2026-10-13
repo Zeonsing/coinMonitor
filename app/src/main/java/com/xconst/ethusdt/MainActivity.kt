@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.xconst.ethusdt.bus.AlertCondition
@@ -389,6 +390,7 @@ fun MainScreen(
                                     NetworkStatus.LOST_LONG -> "❌ 网络断开" } )
                                 Text(if (state.isMonitoring) "✅ 监控运行中" else "❌ 监控未启动")
                                 Text(if (state.isAlarming) "❌ 报警触发" else "✅ 无报警")
+                                Text(if (state.isSwing) "❌ 大幅波动" else "✅ 小幅波动")
                             }
                         }
                     }
@@ -586,7 +588,7 @@ fun PricePanel(prices: Map<Symbol, Double>, oledMode: Boolean, state: UiState) {
                         }
                         Text(
                             text = price?.toString() ?: "--",
-                            style = MaterialTheme.typography.displaySmall,
+                            style = MaterialTheme.typography.displaySmall.copy(fontSize = 58.sp),
                             fontWeight = FontWeight.Bold,
 //                            color = if (oledMode) Color(0xFF008800) else Color.Unspecified
                             color = state.coinColors[symbol]?: CoinColor.GRAY.rgb

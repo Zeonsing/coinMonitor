@@ -42,7 +42,7 @@ import com.xconst.ethusdt.Symbol
 import com.xconst.ethusdt.bus.CoinColor
 import com.xconst.ethusdt.bus.UiState
 import kotlin.getValue
-
+import android.provider.Settings
 class FloatWindowService : Service() {
     private var windowManager: WindowManager? = null
     private var floatingView: ComposeView? = null
@@ -66,6 +66,12 @@ class FloatWindowService : Service() {
     override fun onCreate() {
         super.onCreate()
 
+        if (!Settings.canDrawOverlays(this)) {
+            android.util.Log.e("FloatWindowService", "缺少 SYSTEM_ALERT_WINDOW 权限，已停止服务")
+            stopSelf()
+            return
+        }
+
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_START)
@@ -83,8 +89,8 @@ class FloatWindowService : Service() {
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
-            x = 100
-            y = 100
+            x = 500  // 调大此数值向右（向屏幕水平中心）靠拢，原为 100
+            y = 800  // 调大此数值向下（向屏幕垂直中心）靠拢，原为 100
         }
         viewModel = MainViewModel(application)
 

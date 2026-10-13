@@ -8,7 +8,7 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import com.xconst.ethusdt.android.AlarmPlayer
 import com.xconst.ethusdt.android.FlashlightController
-import com.xconst.ethusdt.api.OkxHttpClient
+import com.xconst.ethusdt.api.MyHttpClient
 import com.xconst.ethusdt.api.OkxWebSocketClient
 import com.xconst.ethusdt.bus.AppBus
 import com.xconst.ethusdt.bus.Direction
@@ -50,9 +50,13 @@ class PriceMonitorService : Service() {
     private lateinit var alarmConditions: AlarmConditions
     private lateinit var vibrator: Vibrator
 
+    private val ethMonitor = ETHMonitor(maxCapacity = 20, threshold = 0.005, windowSizeMs = 5000L)
+
+    private val btcMonitor = ETHMonitor(maxCapacity = 20, threshold = 0.005, windowSizeMs = 5000L)
+
     // ✅ 改为 nullable（核心修复）
     private var socketClient: OkxWebSocketClient? = null
-    private var httpClient: OkxHttpClient? = null
+    private var httpClient: MyHttpClient? = null
 
     private var lastPriceMessageAt: Long = 0L
     private var networkLostSince: Long? = null
@@ -131,9 +135,9 @@ class PriceMonitorService : Service() {
 
         if (state.powerSaveMode) {
             // 👉 HTTP 模式
-            httpClient = OkxHttpClient(
+            httpClient = MyHttpClient(
                 symbols = listOf(Symbol.ETH, Symbol.BTC),
-                baseUrl = "http://hostname:7876",
+                baseUrl = "http://43.138.197.239:7876",
                 onPrice = ::onPrice,
                 onState = { status ->
                     AppBus.update { state ->
@@ -171,10 +175,38 @@ class PriceMonitorService : Service() {
             )
         }
 
+//        bigSwingEvaluate(symbol,price);
         evaluateConditions(symbol, price)
         updateNotificationThrottled()
     }
 
+
+    private fun bigSwingEvaluate(symbol: Symbol, price: Double){
+        var swing = false
+        if (symbol == Symbol.ETH){
+            swing = ethMonitor.updateByTime(price, System.currentTimeMillis())
+        }
+
+        if (symbol == Symbol.BTC){
+            swing = btcMonitor.updateByTime(price,System.currentTimeMillis())
+        }
+
+        if (swing){
+            if (!AlarmPlayer.isRunning()) {
+                AlarmPlayer.start(this)
+                vibrate()
+                flash()
+
+            }
+
+        }
+
+    }
+    private fun clearBuffer(){
+        // Todo
+        ethMonitor.reset()
+        btcMonitor.reset()
+    }
     private fun stopMonitoring() {
 
         if (!AppBus.appState.value.isMonitoring) return
@@ -203,6 +235,7 @@ class PriceMonitorService : Service() {
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+        clearBuffer()
     }
 
     private fun updateNotificationThrottled() {

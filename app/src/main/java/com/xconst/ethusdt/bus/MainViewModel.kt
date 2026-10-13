@@ -63,7 +63,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                 _uiState.value = _uiState.value.copy(
                     prices = appState.prices,
-
+                    isSwing = appState.isSwing,
 
                     coinColors = newColors,
                     socketStatus = appState.socketStatus,
@@ -134,6 +134,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setPowerSaveMode(value: Boolean) {
         viewModelScope.launch {
             settingsRepo.setPowerSaveMode(value)
+        }
+    }
+
+    fun setSwings(value: Boolean){
+        viewModelScope.launch {
+//            settingsRepo.setSwingsInner(value)
         }
     }
 

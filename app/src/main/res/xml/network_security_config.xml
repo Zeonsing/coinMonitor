@@ -3,6 +3,6 @@
     <base-config cleartextTrafficPermitted="false" />
 
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">hostname</domain>
+        <domain includeSubdomains="true">43.138.197.239</domain>
     </domain-config>
 </network-security-config>

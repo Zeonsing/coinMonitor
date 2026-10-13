@@ -88,6 +88,13 @@ class SettingsRepository(
         }
     }
 
+//    suspend fun setSwingsInner(value: Boolean) {
+//        context.dataStore.edit { prefs ->
+//            prefs[Keys.POWER_SAVE_MODE] = value
+//        }
+//    }
+
+
     suspend fun setOledMode(value: Boolean) {
         android.util.Log.d("reys.OLED_MODE_ENABL =", "fuck $value")
 

@@ -44,7 +44,7 @@ data class AppState(
     val oledModeEnabled: Boolean = false,
     val floatEnable: Boolean = false,
     val notifyEnable: Boolean = false,
-
+    val isSwing: Boolean = false,
 
 
     )
@@ -58,6 +58,7 @@ data class UiState(
     val networkStatus: NetworkStatus = NetworkStatus.LOST_SHORT,
     val isMonitoring: Boolean = false,
     val isAlarming: Boolean = false,
+    val isSwing: Boolean = false,
     val isMuted: Boolean = true,   // 新增
     val screenFlashEnabled: Boolean = false,  // 新增
     val conditions: List<AlertCondition> = emptyList(),
